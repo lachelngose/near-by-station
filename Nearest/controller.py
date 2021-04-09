@@ -19,8 +19,8 @@ class Controller:
     def get_article(self, pnu):
         article = self.dal.session.query(Article).filter_by(pnu=pnu).first()
         coord_dict = dict()
-        coord_dict["lat"] = article.latitude
-        coord_dict["lng"] = article.longitude
+        coord_dict["lat"] = str(article.latitude)
+        coord_dict["lng"] = str(article.longitude)
 
         return article, coord_dict
 
@@ -42,8 +42,8 @@ class Controller:
 
             coord_dict = dict()
             coord_dict["station_id"] = station.id
-            coord_dict["lat"] = station.lat
-            coord_dict["lng"] = station.lng
+            coord_dict["lat"] = str(station.lat)
+            coord_dict["lng"] = str(station.lng)
             coord_dict_list.append(coord_dict)
 
         return stations, coord_dict_list
