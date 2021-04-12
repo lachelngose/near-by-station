@@ -25,11 +25,10 @@ class DataAccessLayer:
         self.session = Session()
         return self.session
 
-    def get_object_by_id(self, cls, id):
-        return self.session.query(cls).get(id)
-
-    def commit(self):
+    def add_object(self, object, cls):
+        self.session.add(object)
         self.session.commit()
+        return self.session.query(cls).first()
 
 
 dal = DataAccessLayer()
