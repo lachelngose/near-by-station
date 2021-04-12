@@ -1,36 +1,16 @@
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
+import requests
 
 from Distance.config import API_KEY
 
 
-BASE_URL = "https://maps.googleapis.com/maps/api/distancematrix/json"
+BASE_URL = "https://apis.openapi.sk.com/tmap/routes/pedestrian"
 
 
-def make_request(origins, destinations):
-    for dest in destinations:
-        params = urllib.parse.urlencode(
-            {"origins": f"{origins}", "destinations": f"{dest}", "mode": "walking", "key": API_KEY}
-        )
-        url = f"{BASE_URL}?{params}"
+def make_request(payload):
+    params = {'version': '1', 'callback': 'json'}
+    headers = {'appKey': API_KEY}
 
-        current_delay = 0.1
-        max_delay = 5
+    response = requests.post(BASE_URL, params=params, data=payload, headers=headers)
+    response.raise_for_status()
 
-        while True:
-            try:
-                response = urllib.request.urlopen(url)
-            except urllib.error.URLError:
-                pass
-            else:
-                return response
-
-            if current_delay > max_delay:
-                raise Exception("Too many retry attempts.")
-
-            print("Waiting", current_delay, "seconds before retrying.")
-
-            time.sleep(current_delay)
-            current_delay *= 2
+    return response.json()

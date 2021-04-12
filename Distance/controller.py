@@ -1,18 +1,21 @@
-import json
-
 from Distance import make_request
+from Distance import domain
 
 
-def get_distance(origin, destinations):
-    origin_str = origin["lat"] + "," + origin["lng"]
-    dest_str_list = []
+def get_distance(start, end):
+	payload = dict()
+	payload["startX"] = start["lng"]
+	payload["startY"] = start["lat"]
+	payload["endX"] = end["lng"]
+	payload["endY"] = end["lat"]
+	payload["startName"] = "start"
+	payload["endName"] = "end"
 
-    for dest in destinations:
-        dest_str_list.append(dest["lat"] + "," + dest["lng"])
+	result = make_request(payload)
+	route_list = domain.convert_route_list(result)
 
-    result = json.load(make_request(origin_str, dest_str_list))
-
-    if result["status"] == "OK":
-        return result["rows"]
-    elif result["status"] != "UNKNOWN_ERROR":
-        raise Exception(result["status"])
+	distance = dict()
+	distance["distance"] = domain.get_total_distance(route_list)
+	distance["consuming_time"] = domain.get_total_time(route_list)
+	distance["route_list"] = route_list
+	return distance
