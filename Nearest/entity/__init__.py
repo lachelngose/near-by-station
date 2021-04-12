@@ -95,3 +95,6 @@ class Station(Base):
         self.name = name
         self.lat = lat
         self.lng = lng
+
+    def __getitem__(self, key):
+        return getattr(self, key)
