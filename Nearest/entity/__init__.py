@@ -98,3 +98,24 @@ class Station(Base):
 
     def __getitem__(self, key):
         return getattr(self, key)
+
+
+class NearByStationInfo(Base):
+    __tablename__ = 'nearby_station_info'
+
+    pnu = Column(String, nullable=False, primary_key=True)
+    station_id = Column(Integer, nullable=False, primary_key=True)
+    station_line = Column(String)
+    station_name = Column(String)
+    distance = Column(Float, nullable=False)
+    consuming_time = Column(Float, nullable=False)
+    route = Column(ARRAY(JSON))
+
+    def __init__(self, pnu, station_id, station_line, station_name, distance, consuming_time, route):
+        self.pnu = pnu
+        self.station_id = station_id
+        self.station_line = station_line
+        self.station_name = station_name
+        self.distance = distance
+        self.consuming_time = consuming_time
+        self.route = route
