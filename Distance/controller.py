@@ -17,5 +17,5 @@ def get_distance(start, end):
 	distance = dict()
 	distance["distance"] = domain.get_total_distance(route_list)
 	distance["consuming_time"] = domain.get_total_time(route_list)
-	distance["route_list"] = route_list
+	distance["route"] = route_list
 	return distance

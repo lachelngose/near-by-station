@@ -1,7 +1,8 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 import Nearest
 from Nearest.config import *
-from Nearest.entity import Article
-from Nearest.entity import Station
+from Nearest.entity import *
 
 
 class Controller:
@@ -36,3 +37,13 @@ class Controller:
 
         obj = self.dal.session.execute(sql).fetchone()
         return Station(obj[0], obj[1], obj[2], obj[3], obj[4])
+
+    def save_nearby_station_info(self, data: dict):
+        info_data = NearByStationInfo(data["pnu"], data["station_id"], data["station_line"], data["station_name"],
+                                      data["distance"], data["consuming_time"], data["route"])
+
+        try:
+            self.dal.add_object(info_data, NearByStationInfo)
+            return "OK"
+        except SQLAlchemyError:
+            return SQLAlchemyError.code
