@@ -1,5 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, Numeric, Float, Date, String, Boolean, JSON, ARRAY
+from sqlalchemy import Column, Integer, Numeric, Float, Date, String, Boolean
+from sqlalchemy.dialects.postgresql import ARRAY, JSON, JSONB
 
 Base = declarative_base()
 
@@ -109,7 +110,7 @@ class NearByStationInfo(Base):
     station_name = Column(String)
     distance = Column(Float, nullable=False)
     consuming_time = Column(Float, nullable=False)
-    route = Column(ARRAY(JSON))
+    route = Column(ARRAY(JSONB))
 
     def __init__(self, pnu, station_id, station_line, station_name, distance, consuming_time, route):
         self.pnu = pnu

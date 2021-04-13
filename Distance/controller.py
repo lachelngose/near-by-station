@@ -1,8 +1,10 @@
+from psycopg2.extensions import JSON
+
 from Distance import make_request
-from Distance import domain
+from Distance.domain import Route
 
 
-def get_distance(start, end):
+def get_distance(start: dict, end: dict) -> dict:
 	payload = dict()
 	payload["startX"] = start["lng"]
 	payload["startY"] = start["lat"]
@@ -12,10 +14,19 @@ def get_distance(start, end):
 	payload["endName"] = "end"
 
 	result = make_request(payload)
-	route_list = domain.convert_route_list(result)
+	return convert_dict(result)
 
+
+def convert_dict(feature_collection: JSON) -> dict:
+	features = feature_collection["features"]
 	distance = dict()
-	distance["distance"] = domain.get_total_distance(route_list)
-	distance["consuming_time"] = domain.get_total_time(route_list)
+	route_list = list()
+	for feature in features:
+		route = Route(feature)
+		if route.index == 0:
+			distance["distance"] = feature["properties"]["totalDistance"]
+			distance["consuming_time"] = feature["properties"]["totalTime"]
+		route_list.append(route.__dict__)
+
 	distance["route"] = route_list
 	return distance
