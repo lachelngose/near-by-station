@@ -17,14 +17,14 @@ class Controller:
             DB_PORT=DB_PORT
         )
 
-    def get_article_coord(self, pnu: str):
+    def get_article_coord(self, pnu: str) -> dict:
         article = self.dal.session.query(Article).filter_by(pnu=pnu).first()
         coord_dict = dict()
         coord_dict["lat"] = str(article.latitude)
         coord_dict["lng"] = str(article.longitude)
         return coord_dict
 
-    def find_nearby_station(self, pnu: str):
+    def find_nearby_station(self, pnu: str) -> Station:
         sql = ("SELECT s.id, s.line, s.name, s.lat, s.lng\n"
                "FROM article_master a\n"
                "LEFT JOIN station_coordinate s\n"
@@ -43,7 +43,7 @@ class Controller:
                                       data["distance"], data["consuming_time"], data["route"])
 
         try:
-            self.dal.add_object(info_data, NearByStationInfo)
+            self.dal.add_object(info_data)
             return "OK"
         except SQLAlchemyError:
             return SQLAlchemyError.code

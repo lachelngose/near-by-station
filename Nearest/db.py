@@ -25,10 +25,9 @@ class DataAccessLayer:
         self.session = Session()
         return self.session
 
-    def add_object(self, object, cls):
+    def add_object(self, object):
         self.session.add(object)
         self.session.commit()
-        return self.session.query(cls).first()
 
 
 dal = DataAccessLayer()

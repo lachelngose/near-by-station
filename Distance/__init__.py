@@ -6,7 +6,7 @@ from Distance.config import API_KEY
 BASE_URL = "https://apis.openapi.sk.com/tmap/routes/pedestrian"
 
 
-def make_request(payload):
+def make_request(payload: dict):
     params = {'version': '1', 'callback': 'json'}
     headers = {'appKey': API_KEY}
 

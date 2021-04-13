@@ -2,11 +2,9 @@ from Nearest.controller import Controller
 from Distance.controller import get_distance
 
 
-# def main(event, context):
-def main():
+def main(event, context):
     ctl = Controller()
-    # pnu = event['pnu']
-    pnu = '1126010300103050023'
+    pnu = event['pnu']
 
     article_coord = ctl.get_article_coord(pnu)
     station = ctl.find_nearby_station(pnu)
@@ -22,7 +20,7 @@ def main():
     }
 
 
-def aggregation_near_by_station(pnu: str, station: dict, distance: dict):
+def aggregation_near_by_station(pnu: str, station: dict, distance: dict) -> dict:
     data = dict()
     data["pnu"] = pnu
     data["station_id"] = station["id"]
@@ -36,7 +34,3 @@ def aggregation_near_by_station(pnu: str, station: dict, distance: dict):
 
 def lambda_handler(event, context):
     return main(event, context)
-
-
-if __name__ == '__main__':
-    main()
