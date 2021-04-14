@@ -38,7 +38,7 @@ def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
 
 
 def lambda_handler(event, context):
-    ctl = Controller()
+    ctl = Controller(event["env"])
 
     pnus = pick_target_to_nearby_station(event, ctl)
 

@@ -7,14 +7,15 @@ from NearestStationORM.entity import *
 
 class Controller:
 
-    def __init__(self):
+    def __init__(self, env: str):
+        dbinfo = get_dbinfo_by_env(env)
         self.dal = NearestStationORM.create_database_layer(
-            DB_DRIVER='postgresql',
-            DB_HOST=DB_HOST,
-            DB_NAME=DB_NAME,
-            DB_USER=DB_USER,
-            DB_PASSWORD=DB_PASSWD,
-            DB_PORT=DB_PORT
+            DB_DRIVER=dbinfo["driver"],
+            DB_HOST=dbinfo["host"],
+            DB_NAME=dbinfo["name"],
+            DB_USER=dbinfo["user"],
+            DB_PASSWORD=dbinfo["password"],
+            DB_PORT=dbinfo["port"]
         )
 
     def get_article_coord(self, pnu: str) -> dict:
