@@ -1,12 +1,16 @@
 from NearestStationORM.controller import Controller
 from WalkingDistanceAPI.controller import get_distance
 
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def update_nearby_station_info(pnu, ctl):
     article_coord = ctl.get_article_coord(pnu)
     station = ctl.find_nearby_station(pnu)
     if station["lat"] is None:
-        print("There is no near station")
+        logger.info("There is no near station")
         return
 
     distance = get_distance(article_coord, station)
@@ -14,7 +18,7 @@ def update_nearby_station_info(pnu, ctl):
     near_by_station_data = aggregation_nearby_station(pnu, station, distance)
 
     results = ctl.save_nearby_station_info(near_by_station_data)
-    print(results)
+    logger.info(results)
 
     return {
         'results': results
