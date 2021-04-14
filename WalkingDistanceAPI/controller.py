@@ -1,7 +1,7 @@
 from psycopg2.extensions import JSON
 
-from Distance import make_request
-from Distance.domain import Route
+from WalkingDistanceAPI import make_request
+from WalkingDistanceAPI.domain import Route
 
 
 def get_distance(start: dict, end: dict) -> dict:
