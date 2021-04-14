@@ -8,9 +8,13 @@ def main(event, context):
 
     article_coord = ctl.get_article_coord(pnu)
     station = ctl.find_nearby_station(pnu)
+    if station["lat"] is None:
+        print("There is no near station")
+        return
+
     distance = get_distance(article_coord, station)
 
-    near_by_station_data = aggregation_near_by_station(pnu, station, distance)
+    near_by_station_data = aggregation_nearby_station(pnu, station, distance)
 
     results = ctl.save_nearby_station_info(near_by_station_data)
     print(results)
@@ -20,7 +24,7 @@ def main(event, context):
     }
 
 
-def aggregation_near_by_station(pnu: str, station: dict, distance: dict) -> dict:
+def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
     data = dict()
     data["pnu"] = pnu
     data["station_id"] = station["id"]

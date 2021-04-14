@@ -20,8 +20,8 @@ class Article(Base):
     prev_deal_price = Column(Numeric)
     cp_pc_article_url = Column(String, nullable=False)
     is_detail_address = Column(Boolean, nullable=False)
-    latitude = Column(Float, nullable=False)
-    longitude = Column(Float, nullable=False)
+    lat = Column("latitude", Float, nullable=False)
+    lng = Column("longitude", Float, nullable=False)
     geometry = Column(JSON, nullable=False)
     floor_cnt = Column(Numeric)
     ungflr_cnt = Column(Numeric)
@@ -59,8 +59,8 @@ class Article(Base):
         self.prev_deal_price = prev_deal_price
         self.cp_pc_article_url = cp_pc_article_url
         self.is_detail_address = is_detail_address
-        self.latitude = latitude
-        self.longitude = longitude
+        self.lat = latitude
+        self.lng = longitude
         self.geometry = geometry
         self.floor_cnt = floor_cnt
         self.ungflr_cnt = ungflr_cnt
@@ -79,6 +79,9 @@ class Article(Base):
         self.show_order = show_order
         self.ground_space = ground_space
         self.sales_item_id = sales_item_id
+
+    def __getitem__(self, key):
+        return getattr(self, key)
 
 
 class Station(Base):
