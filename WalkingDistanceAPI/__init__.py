@@ -1,8 +1,11 @@
 import requests
 import time
+import logging
 
 from WalkingDistanceAPI.config import API_KEY
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 BASE_URL = "https://apis.openapi.sk.com/tmap/routes/pedestrian"
 
@@ -10,7 +13,7 @@ BASE_URL = "https://apis.openapi.sk.com/tmap/routes/pedestrian"
 def make_request(payload: dict):
     params = {'version': '1', 'callback': 'json'}
     headers = {'appKey': API_KEY}
-    print(payload)
+    logger.info(payload)
 
     max_try_count = 5
     try_count = 0
