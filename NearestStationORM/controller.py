@@ -1,14 +1,15 @@
 from sqlalchemy.exc import SQLAlchemyError
 
-import Nearest
-from Nearest.config import *
-from Nearest.entity import *
+import NearestStationORM
+from NearestStationORM.config import *
+from NearestStationORM.entity import *
+
 
 
 class Controller:
 
     def __init__(self):
-        self.dal = Nearest.create_database_layer(
+        self.dal = NearestStationORM.create_database_layer(
             DB_DRIVER='postgresql',
             DB_HOST=DB_HOST,
             DB_NAME=DB_NAME,

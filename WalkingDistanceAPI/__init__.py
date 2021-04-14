@@ -1,6 +1,6 @@
 import requests
 
-from Distance.config import API_KEY
+from WalkingDistanceAPI.config import API_KEY
 
 
 BASE_URL = "https://apis.openapi.sk.com/tmap/routes/pedestrian"

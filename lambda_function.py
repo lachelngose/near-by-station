@@ -1,5 +1,5 @@
-from Nearest.controller import Controller
-from Distance.controller import get_distance
+from NearestStationORM.controller import Controller
+from WalkingDistanceAPI.controller import get_distance
 
 
 def main(event, context):

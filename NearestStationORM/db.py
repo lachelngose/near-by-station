@@ -1,7 +1,7 @@
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import sessionmaker
-from Nearest.exception import DalEngineNotExistsError
-from Nearest.entity import Base
+from NearestStationORM.exception import DalEngineNotExistsError
+from NearestStationORM.entity import Base
 
 
 class DataAccessLayer:
