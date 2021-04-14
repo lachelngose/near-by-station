@@ -25,7 +25,7 @@ def convert_dict(feature_collection: JSON) -> dict:
 		route = Route(feature)
 		if route.index == 0:
 			distance["distance"] = feature["properties"]["totalDistance"]
-			distance["consuming_time"] = feature["properties"]["totalTime"]
+			distance["consuming_time"] = int(feature["properties"]["totalTime"]/60)
 		route_list.append(route.__dict__)
 
 	distance["route"] = route_list
