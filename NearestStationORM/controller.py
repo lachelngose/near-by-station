@@ -5,7 +5,6 @@ from NearestStationORM.config import *
 from NearestStationORM.entity import *
 
 
-
 class Controller:
 
     def __init__(self):
@@ -19,11 +18,8 @@ class Controller:
         )
 
     def get_article_coord(self, pnu: str) -> dict:
-        article = self.dal.session.query(Article).filter_by(pnu=pnu).first()
-        coord_dict = dict()
-        coord_dict["lat"] = str(article.latitude)
-        coord_dict["lng"] = str(article.longitude)
-        return coord_dict
+        rs = self.dal.session.query(Article.lat, Article.lng).filter_by(pnu=pnu).first()
+        return dict(rs)
 
     def find_nearby_station(self, pnu: str) -> Station:
         sql = ("SELECT s.id, s.line, s.name, s.lat, s.lng\n"
