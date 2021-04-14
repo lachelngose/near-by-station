@@ -21,6 +21,15 @@ class Controller:
         rs = self.dal.session.query(Article.lat, Article.lng).filter_by(pnu=pnu).first()
         return dict(rs)
 
+    def get_pnus_having_subway_info(self):
+        rs = self.dal.session.query(Article.pnu).distinct(Article.pnu)\
+            .join(NearByStationInfo, Article.pnu == NearByStationInfo.pnu).all()
+        return map(lambda a: a[0], rs)
+
+    def get_pnus(self):
+        rs = self.dal.session.query(Article.pnu).distinct(Article.pnu).all()
+        return map(lambda a: a[0], rs)
+
     def find_nearby_station(self, pnu: str) -> Station:
         sql = ("SELECT s.id, s.line, s.name, s.lat, s.lng\n"
                "FROM article_master a\n"

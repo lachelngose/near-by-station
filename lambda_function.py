@@ -2,10 +2,7 @@ from NearestStationORM.controller import Controller
 from WalkingDistanceAPI.controller import get_distance
 
 
-def main(event, context):
-    ctl = Controller()
-    pnu = event['pnu']
-
+def update_nearby_station_info(pnu, ctl):
     article_coord = ctl.get_article_coord(pnu)
     station = ctl.find_nearby_station(pnu)
     if station["lat"] is None:
@@ -37,4 +34,31 @@ def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
 
 
 def lambda_handler(event, context):
-    return main(event, context)
+    ctl = Controller()
+
+    pnus = pick_target_to_nearby_station(event, ctl)
+
+    for pnu in pnus:
+        update_nearby_station_info(pnu, ctl)
+
+
+def pick_target_to_nearby_station(event, ctl):
+    if event is None or "pnu" not in event or event["pnu"] is None:
+        pnus = ctl.get_pnus()
+    else:
+        pnus = event['pnu']
+
+    existed = ctl.get_pnus_having_subway_info()
+
+    if type(pnus) is str:
+        pnus = [pnus]
+
+    return set(pnus).difference(set(existed))
+
+
+def main():
+    lambda_handler(None, None)
+
+
+if __name__ == '__main__':
+    main()
