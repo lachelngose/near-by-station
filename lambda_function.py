@@ -24,12 +24,9 @@ def update_nearby_station_info(pnu, ctl):
 
     near_by_station_data = aggregation_nearby_station(pnu, station, distance)
 
-    results = ctl.save_nearby_station_info(near_by_station_data)
-    logger.info(results)
-
-    return {
-        'results': results
-    }
+    envs = ["staging", "production"]
+    for env in envs:
+        save_nearby_station_info(near_by_station_data, env)
 
 
 def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
@@ -42,6 +39,18 @@ def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
     data["consuming_time"] = distance["consuming_time"]
     data["route"] = distance["route"]
     return data
+
+
+def save_nearby_station_info(data: dict, env: str) :
+    ctl = Controller(env)
+    if data["consuming_time"] < 21:
+        results = ctl.save_nearby_station_info(data)
+        logger.info(results)
+        return {
+            'results': results
+        }
+    else:
+        logger.info("too far to walk")
 
 
 def lambda_handler(event, context):
