@@ -1,14 +1,19 @@
 from sqlalchemy.exc import SQLAlchemyError
+import logging
 
 import NearestStationORM
 from NearestStationORM.config import *
 from NearestStationORM.entity import *
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class Controller:
 
     def __init__(self, env: str):
         dbinfo = get_dbinfo_by_env(env)
+        logger.info("try to connect database : " + dbinfo["name"])
+
         self.dal = NearestStationORM.create_database_layer(
             DB_DRIVER=dbinfo["driver"],
             DB_HOST=dbinfo["host"],
@@ -18,8 +23,12 @@ class Controller:
             DB_PORT=dbinfo["port"]
         )
 
+        logger.info("data access layer created.")
+
     def get_article_coord(self, pnu: str) -> dict:
         rs = self.dal.session.query(Article.lat, Article.lng).filter_by(pnu=pnu).first()
+        if rs is None:
+            return dict()
         return dict(rs)
 
     def get_pnus_having_subway_info(self):

@@ -2,12 +2,19 @@ from NearestStationORM.controller import Controller
 from WalkingDistanceAPI.controller import get_distance
 
 import logging
+import json
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+ENV = "staging"
+
 def update_nearby_station_info(pnu, ctl):
     article_coord = ctl.get_article_coord(pnu)
+    if article_coord.__len__() == 0:
+        logger.info("There is no article")
+        return
+
     station = ctl.find_nearby_station(pnu)
     if station["lat"] is None:
         logger.info("There is no near station")
@@ -38,12 +45,19 @@ def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
 
 
 def lambda_handler(event, context):
-    ctl = Controller(event["env"])
+    ctl = Controller(ENV)
 
     pnus = pick_target_to_nearby_station(event, ctl)
 
     for pnu in pnus:
         update_nearby_station_info(pnu, ctl)
+
+    logger.info("update completed")
+
+    return {
+        'statusCode': 200,
+        'body': pnus
+    }
 
 
 def pick_target_to_nearby_station(event, ctl):
@@ -51,17 +65,20 @@ def pick_target_to_nearby_station(event, ctl):
         pnus = ctl.get_pnus()
     else:
         pnus = event['pnu']
+        logger.info("requested : " + json.dumps(pnus))
 
     existed = ctl.get_pnus_having_subway_info()
 
     if type(pnus) is str:
         pnus = [pnus]
 
-    return set(pnus).difference(set(existed))
+    return list(set(pnus).difference(set(existed)))
 
 
 def main():
-    lambda_handler(None, None)
+    event = dict()
+    event["env"] = "local"
+    lambda_handler(event, None)
 
 
 if __name__ == '__main__':
