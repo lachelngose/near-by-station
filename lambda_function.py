@@ -9,24 +9,30 @@ logger.setLevel(logging.INFO)
 
 ENV = "staging"
 
-def update_nearby_station_info(pnu, ctl):
-    article_coord = ctl.get_article_coord(pnu)
-    if article_coord.__len__() == 0:
-        logger.info("There is no article")
+
+def get_nearby_station_info(pnus: list, ctl):
+    info_datas = list()
+    for pnu in pnus:
+        article_coord = ctl.get_article_coord(pnu)
+        if len(article_coord) == 0:
+            logger.info("There is no article")
+            continue
+
+        station = ctl.find_nearby_station(pnu)
+        if station["lat"] is None:
+            logger.info("There is no near station")
+            continue
+
+        distance = get_distance(article_coord, station)
+
+        info_datas.append(aggregation_nearby_station(pnu, station, distance))
+
+    if len(info_datas) == 0:
         return
-
-    station = ctl.find_nearby_station(pnu)
-    if station["lat"] is None:
-        logger.info("There is no near station")
-        return
-
-    distance = get_distance(article_coord, station)
-
-    near_by_station_data = aggregation_nearby_station(pnu, station, distance)
 
     envs = ["staging", "production"]
     for env in envs:
-        save_nearby_station_info(near_by_station_data, env)
+        save_nearby_station_info(info_datas, env)
 
 
 def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
@@ -41,25 +47,24 @@ def aggregation_nearby_station(pnu: str, station: dict, distance: dict) -> dict:
     return data
 
 
-def save_nearby_station_info(data: dict, env: str) :
+def save_nearby_station_info(datas: list, env: str):
     ctl = Controller(env)
-    if data["consuming_time"] < 21:
+    for data in datas:
+    # if data["consuming_time"] < 21:
         results = ctl.save_nearby_station_info(data)
         logger.info(results)
-        return {
-            'results': results
-        }
-    else:
-        logger.info("too far to walk")
+    # else:
+    #     logger.info("too far to walk")
 
 
 def lambda_handler(event, context):
     ctl = Controller(ENV)
 
     pnus = pick_target_to_nearby_station(event, ctl)
+    logger.info("size of pnu list without station info : " + str(len(pnus)))
 
-    for pnu in pnus:
-        update_nearby_station_info(pnu, ctl)
+    for i in range(0, len(pnus), 100):
+        get_nearby_station_info(pnus[i:i + 100], ctl)
 
     logger.info("update completed")
 
@@ -86,7 +91,6 @@ def pick_target_to_nearby_station(event, ctl):
 
 def main():
     event = dict()
-    event["env"] = "local"
     lambda_handler(event, None)
 
 
