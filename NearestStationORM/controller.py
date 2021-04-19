@@ -40,23 +40,24 @@ class Controller:
         rs = self.dal.session.query(Article.pnu).distinct(Article.pnu).all()
         return map(lambda a: a[0], rs)
 
-    def find_nearby_station(self, pnu: str) -> Station:
+    def find_nearby_station(self, distance: int, pnu: str) -> Station:
         sql = ("SELECT s.id, s.line, s.name, s.lat, s.lng\n"
                "FROM article_master a\n"
                "LEFT JOIN station_coordinate s\n"
                "    ON ST_DWithin(\n"
                "          ST_Transform(ST_SetSRID(ST_MakePoint(a.longitude, a.latitude), 4326),5186), \n"
-               "          ST_Transform(ST_SetSRID(ST_MakePoint(s.lng, s.lat), 4326),5186), 1000) \n"
+               f"          ST_Transform(ST_SetSRID(ST_MakePoint(s.lng, s.lat), 4326),5186), \'{distance}\') \n"
                "WHERE a.pnu = \'{pnu}\'"
                "ORDER BY ST_Distance(ST_MakePoint(a.longitude, a.latitude), ST_MakePoint(s.lng, s.lat))"
-               "LIMIT 1").format(pnu=pnu)
+               "LIMIT 1").format(distance=distance, pnu=pnu)
+        logger.debug(sql)
 
         obj = self.dal.session.execute(sql).fetchone()
         return Station(obj[0], obj[1], obj[2], obj[3], obj[4])
 
     def save_nearby_station_info(self, data: dict):
         info_data = NearByStationInfo(data["pnu"], data["station_id"], data["station_line"], data["station_name"],
-                                      data["distance"], data["consuming_time"], data["route"])
+                                      data["distance"], data["travel_mode"], data["consuming_time"], data["route"])
 
         try:
             self.dal.add_object(info_data)

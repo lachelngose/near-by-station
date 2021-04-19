@@ -112,14 +112,16 @@ class NearByStationInfo(Base):
     station_line = Column(String)
     station_name = Column(String)
     distance = Column(Numeric, nullable=False)
+    travel_mode = Column(String, nullable=False, primary_key=True)
     consuming_time = Column(Numeric, nullable=False)
     route = Column(ARRAY(JSONB))
 
-    def __init__(self, pnu, station_id, station_line, station_name, distance, consuming_time, route):
+    def __init__(self, pnu, station_id, station_line, station_name, distance, travel_mode, consuming_time, route):
         self.pnu = pnu
         self.station_id = station_id
         self.station_line = station_line
         self.station_name = station_name
         self.distance = distance
+        self.travel_mode = travel_mode
         self.consuming_time = consuming_time
         self.route = route
