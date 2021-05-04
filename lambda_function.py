@@ -106,13 +106,15 @@ def pick_target_to_nearby_station(event, ctl):
     if event is None or "pnu" not in event or event["pnu"] is None:
         pnus = ctl.get_pnus()
     else:
-        pnus = event['pnu']
-        logger.info("requested : " + json.dumps(pnus))
+        requested = event['pnu']
+        logger.info("requested : " + json.dumps(event['pnu']))
+        if type(requested) is str:
+            requested = [requested]
+
+        pnus = list(filter(ctl.is_article_exist, requested))
+        logger.info("targeted : " + json.dumps(pnus))
 
     existed = ctl.get_pnus_having_subway_info()
-
-    if type(pnus) is str:
-        pnus = [pnus]
 
     return list(set(pnus).difference(set(existed)))
 

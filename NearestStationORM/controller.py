@@ -31,6 +31,10 @@ class Controller:
             return dict()
         return dict(rs)
 
+    def is_article_exist(self, pnu: str) -> bool:
+        rs = self.dal.session.query(Article.pnu).filter_by(pnu=pnu).first()
+        return True if rs is not None else False
+
     def get_pnus_having_subway_info(self):
         rs = self.dal.session.query(Article.pnu).distinct(Article.pnu)\
             .join(NearByStationInfo, Article.pnu == NearByStationInfo.pnu).all()
